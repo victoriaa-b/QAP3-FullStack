@@ -46,8 +46,8 @@ app.get("/login", (request, response) => {
 });
 
 // POST /login - Allows a user to login
-app.post("/login", (req, res) => {
-    const { email, password } = req.body;
+app.post("/login", (request, response) => {
+    const { email, password } = request.body;
 
     // need to check for the user email 
     const user = USERS.find(user => user.email === email);
@@ -55,14 +55,12 @@ app.post("/login", (req, res) => {
     // reminder to use bcrypt when checking!!!
     // throw an error if there isnt a user or password is wrong
     if (!user || !bcrypt.compareSync(password, user.password)) {
-      
-        return res.render("login", {errorMessage: "Incorrect Email or Password. Try Again.",
+        return response.render("login", {errorMessage: "Incorrect Email or Password. Try Again.",
       });
     }
-
-    req.session.user = user; // this will store everything in the session 
+    request.session.user = user; // this will store everything in the session 
     // note to double check when logic is done
-    res.redirect("/landing");
+    response.redirect("/landing");
 
 });
 
@@ -102,7 +100,7 @@ app.post("/signup", (request, response) => {
   // store the user info
   USERS.push(addedUser);
 
-  // need to sotre the user in session with REQUEST -- missing
+  // need to store the user in session with REQUEST -- missing
   request.session.user = {
     id: addedUser.id,
     username: addedUser.username,
