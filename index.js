@@ -59,8 +59,9 @@ app.post("/login", (req, res) => {
         return res.render("login", {errorMessage: "Incorrect Email or Password. Try Again.",
       });
     }
-    
-    req.session.user = user;
+
+    req.session.user = user; // this will store everything in the session 
+    // note to double check when logic is done
     res.redirect("/landing");
 
 });
@@ -72,7 +73,30 @@ app.get("/signup", (request, response) => {
 
 // POST /signup - Allows a user to signup
 app.post("/signup", (request, response) => {
-    
+    const { username, email, password, role } = req.body;
+
+    // want to check if the email or the user is available or already taken
+    // dont want to specify which one 
+    const availableUserInfo = USERS.find((user) => user.email === email || user.username === username);
+    if (availableUserInfo) {
+        return res.render("signup", {errorMessage: "TEmail or Username is already in use. Please try another one.",});
+      }
+
+    // check the passowrd for the use of bcrypt
+    const passwordCheck = bcrypt.hashSync(password, SALT_ROUNDS);
+
+    // need a new user object 
+    const addedUser = {
+      id: USERS.length + 1, 
+      username,
+      email,
+      password: passwordCheck, // checks the password that was hashed 
+      role: role || "user",  // if role isn't picked we will make it a user
+    };
+
+    // store the user info
+    USERS.push(addedUser);
+    res.redirect("/landing");
 });
 
 // GET / - Render index page or redirect to landing if logged in
