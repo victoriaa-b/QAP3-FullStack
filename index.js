@@ -1,6 +1,8 @@
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
+const bcrypt = require("bcrypt");
+
 
 const app = express();
 const PORT = 3000;
@@ -10,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
     session({
-        secret: "replace_this_with_a_secure_key",
+        secret: "fullStack",
         resave: false,
         saveUninitialized: true,
     })
