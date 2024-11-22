@@ -46,7 +46,22 @@ app.get("/login", (request, response) => {
 });
 
 // POST /login - Allows a user to login
-app.post("/login", (request, response) => {
+app.post("/login", (req, res) => {
+    const { email, password } = req.body;
+
+    // need to check for the user email 
+    const user = USERS.find(user => user.email === email);
+
+    // reminder to use bcrypt when checking!!!
+    // throw an error if there isnt a user or password is wrong
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      
+        return res.render("login", {errorMessage: "Incorrect Email or Password. Try Again.",
+      });
+    }
+    
+    req.session.user = user;
+    res.redirect("/landing");
 
 });
 
