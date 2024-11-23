@@ -1,6 +1,6 @@
 const express = require("express");
-const path = require("path");
 const session = require("express-session");
+const path = require("path");
 const bcrypt = require("bcrypt");
 
 
@@ -14,7 +14,7 @@ app.use(
     session({
         secret: "fullStack",
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
     })
 );
 
@@ -120,8 +120,26 @@ app.get("/", (request, response) => {
 
 // GET /landing - Shows a welcome page for users, shows the names of all users if an admin
 app.get("/landing", (request, response) => {
+    // need two displays for admin and users
+    if(!request.session.user) {
+      return repsonse. redirect("/login");
+    }
+
+    const {username} = request.session.user;
+
+    if (role === "admin") {
+    return response.render("landing", {
+      landingMessage: `Greetings, ${username}! You're logged in as an Admin.`,
+      users: USERS, // wants to show all of the users for the admin
+    });
+    } else {
+      response.render("landing", {
+        landingMessage: `Greetings, ${username}!`,
+        user: null, // not needed
+      })
+    }
     
-});
+})
 
 // Start server
 app.listen(PORT, () => {
