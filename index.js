@@ -82,6 +82,7 @@ app.get("/landing", (request, response) => {
     return response.render("landing", {
       landingMessage: `Greetings, ${username}! You're logged in as an Admin.`,
       users: USERS, // wants to show all of the users for the admin
+    
     });
     } else {
       response.render("landing", {
