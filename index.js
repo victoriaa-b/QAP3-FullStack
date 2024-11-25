@@ -120,12 +120,13 @@ app.get("/", (request, response) => {
 
 // GET /landing - Shows a welcome page for users, shows the names of all users if an admin
 app.get("/landing", (request, response) => {
+  // Error - role is not defined ?
     // need two displays for admin and users
     if(!request.session.user) {
-      return repsonse. redirect("/login");
+      return response. redirect("/login"); // spelling error
     }
 
-    const {username} = request.session.user;
+    const {username, role} = request.session.user; // role added - fixed error 
 
     if (role === "admin") {
     return response.render("landing", {
@@ -138,7 +139,7 @@ app.get("/landing", (request, response) => {
         user: null, // not needed
       })
     }
-    
+    // login out buttin logic needs to be set up
 })
 
 // Start server
