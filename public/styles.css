@@ -130,3 +130,27 @@ body {
     font-family: Verdana, sans-serif;
 }
 
+.tableLooks {
+    width: 80%;
+    text-align: left;
+    border-collapse: collapse;
+    margin: 20px;
+
+}
+
+.tableLooks th, .tableLooks td {
+    border: 1px solid #ccc; 
+    padding: 10px;           
+    text-align: left;     
+}
+
+.tableLooks th {
+    background-color: #2196f3; 
+    font-weight: bold;
+    text-shadow: 2px 2px 2px #000000;
+}
+
+
+.tableLooks tr:hover {            
+    background-color: #7e328a;
+}

@@ -29,14 +29,14 @@ const USERS = [
         password: bcrypt.hashSync("admin123", SALT_ROUNDS), //In a database, you'd just store the hashes, but for 
                                                             // our purposes we'll hash these existing users when the 
                                                             // app loads
-        role: "admin",
+        role: "Admin",
     },
     {
         id: 2,
         username: "RegularUser",
         email: "user@example.com",
         password: bcrypt.hashSync("user123", SALT_ROUNDS),
-        role: "user", // Regular user
+        role: "User", // Regular user
     },
 ];
 
@@ -94,7 +94,7 @@ app.post("/signup", (request, response) => {
     username,
     email,
     password: passwordCheck, // checks the password that was hashed
-    role: role || "user", // if role isn't picked we will make it a user
+    role: role || "User", // if role isn't picked we will make it a user
   };
 
   // store the user info
@@ -120,15 +120,14 @@ app.get("/", (request, response) => {
 
 // GET /landing - Shows a welcome page for users, shows the names of all users if an admin
 app.get("/landing", (request, response) => {
-  // Error - role is not defined ?
     // need two displays for admin and users
     if(!request.session.user) {
-      return response. redirect("/login"); // spelling error
+      return response. redirect("/login"); 
     }
 
-    const {username, role} = request.session.user; // role added - fixed error 
+    const {username, role} = request.session.user; 
 
-    if (role === "admin") {
+    if (role === "Admin") {
     return response.render("landing", {
       landingMessage: `Greetings, ${username}! You're logged in as an Admin.`,
       users: USERS, // wants to show all of the users for the admin
@@ -136,12 +135,20 @@ app.get("/landing", (request, response) => {
     } else {
       response.render("landing", {
         landingMessage: `Greetings, ${username}!`,
-        user: null, // not needed
+        user: null, // user not needed as we only want it for admin
       })
     }
-    // login out buttin logic needs to be set up
+    // login out button logic needs to be set up
 })
 
+app.post("/logout", (request, response) => {
+  request.session.destroy((error) => {
+    if (error) {
+      return response.status(500).send("Failed to logout. Please try again.");
+    }
+    response.redirect("/");
+  });
+});
 // Start server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

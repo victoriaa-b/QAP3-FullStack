@@ -3,6 +3,36 @@
 <!--For users, display a simple dashboard with their username. -->
 <!--For admins, display all registered users with their email and role.-->
 <%- include('partials/header', { title: "Landing" }) %>
-<h1> <%= landingMessage %> </h1> <!--Have two titles as there is user(dashboard) and admin(all users)-->
-<!--CHECK - try and  -->
+<h1> <%= landingMessage %> </h1> <!-- Title switches depending on admin or user role-->
+
+<% if (users) { %>
+    <h2>All Registered Users:</h2>
+    <table class="tableLooks">
+        <thead>
+            <tr>
+                <th>Username:</th>
+                <th>Email:</th>
+                <th>Role:</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><strong><%= user.username %></strong></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.role %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+<% } else { %> 
+    <h2>Welcome to your dashboard!</h2>
+<% } %>
+<form action="/logout" method="POST">
+    <span class="index-button-container">
+        <button type="submit">Logout</button>
+    </span>
+</form>
+
+
 <%- include('partials/footer') %>
