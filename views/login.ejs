@@ -2,9 +2,6 @@
 <!--Compare hashed passwords during authentication. -->
 <%- include('partials/header', { title: "Login" }) %>
     <h1>Login</h1>
-
- 
-
     <form action="/login" method="POST">
         <p class="infoText">Please fill out the following information below: </p>
         <div class="form-input-container">
@@ -15,15 +12,17 @@
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required>
         </div>
-           <!-- Check for error in the form could be user or password -->
+        
+        <!--Error Messages-->
     <% if (typeof errorMessage !== 'undefined') { %>
         <div class="errorMessage">
             <%= errorMessage %>
         </div>
     <% } %>
+
+    <!---Buttons-->
         <span class="index-button-container"><button type="submit">Login</button> </span> 
     </form>
-
       <span class="index-button-container">
    <button onclick="window.location.href='/'">Return to Home</button></span>
 <%- include('partials/footer') %>

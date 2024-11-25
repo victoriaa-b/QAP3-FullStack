@@ -3,8 +3,16 @@ Displays buttons for “Login” and “Sign Up.” -->
 
 <%- include('partials/header', { title: "Home" }) %>
     <h1>Welcome to the Authentication Project</h1>
+
+    <!--Extra-->
+     <div class="passwordTipsContainer">
+    <h2>Password Safety Tip of the Day:</h2>
+    <p><%= passwordTip %></p>
+</div>
+<!--Buttons-->
     <span class="index-button-container">
         <button onclick="window.location.href='/login'">Login</button>
         <button onclick="window.location.href='/signup'">Sign Up</button>
     </span>
+
 <%- include('partials/footer') %>

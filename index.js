@@ -7,6 +7,14 @@ const bcrypt = require("bcrypt");
 const app = express();
 const PORT = 3000;
 const SALT_ROUNDS = 10;
+// For extra feature
+const funFacts = [
+  "Never Share your passowrds with anyone!",
+  "Avoid using personal informations",
+  "Don't use the same passwords across different websites!",
+  "Make sure your passwords contain letters, numbers, and special characters",
+  "Always use teo-factor authentication whenever application"
+];
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -40,28 +48,10 @@ const USERS = [
     },
 ];
 
+// GETS
 // GET /login - Render login form
 app.get("/login", (request, response) => {
     response.render("login");
-});
-
-// POST /login - Allows a user to login
-app.post("/login", (request, response) => {
-    const { email, password } = request.body;
-
-    // need to check for the user email 
-    const user = USERS.find(user => user.email === email);
-
-    // reminder to use bcrypt when checking!!!
-    // throw an error if there isnt a user or password is wrong
-    if (!user || !bcrypt.compareSync(password, user.password)) {
-        return response.render("login", {errorMessage: "Incorrect Email or Password. Try Again.",
-      });
-    }
-    request.session.user = user; // this will store everything in the session 
-    // note to double check when logic is done
-    response.redirect("/landing");
-
 });
 
 // GET /signup - Render signup form
@@ -69,6 +59,40 @@ app.get("/signup", (request, response) => {
     response.render("signup");
 });
 
+// GET / - Render index page or redirect to landing if logged in
+app.get("/", (request, response) => {
+    if (request.session.user) {
+        return response.redirect("/landing");
+    }
+    const passwordTips =funFacts[Math.floor(Math.random() * funFacts.length)];
+
+    response.render("index", { passwordTip: passwordTips });
+});
+
+// GET /landing - Shows a welcome page for users, shows the names of all users if an admin
+app.get("/landing", (request, response) => {
+    // need two displays for admin and users
+    if(!request.session.user) {
+      return response. redirect("/login"); 
+    }
+
+    const {username, role} = request.session.user; 
+
+    if (role === "Admin") {
+    return response.render("landing", {
+      landingMessage: `Greetings, ${username}! You're logged in as an Admin.`,
+      users: USERS, // wants to show all of the users for the admin
+    });
+    } else {
+      response.render("landing", {
+        landingMessage: `Greetings, ${username}!`,
+        users: null, // user not needed as we only want it for admin
+      })
+    }
+    // login out button logic needs to be set up
+})
+
+// POSTS
 // POST /signup - Allows a user to signup
 app.post("/signup", (request, response) => {
   const { username, email, password, role } = request.body;
@@ -100,46 +124,33 @@ app.post("/signup", (request, response) => {
   // store the user info
   USERS.push(addedUser);
 
-  // need to store the user in session with REQUEST -- missing
+  // need to store the user in session with REQUEST 
   request.session.user = {
     id: addedUser.id,
     username: addedUser.username,
     role: addedUser.role,
   };
   // directs to the landing page if the sign up was successful
-  response.redirect("/landing"); // CHECK
+  response.redirect("/landing");
 });
 
-// GET / - Render index page or redirect to landing if logged in
-app.get("/", (request, response) => {
-    if (request.session.user) {
-        return response.redirect("/landing");
+// POST /login - Allows a user to login
+app.post("/login", (request, response) => {
+    const { email, password } = request.body;
+
+    // need to check for the user email 
+    const user = USERS.find(user => user.email === email);
+
+    // reminder to use bcrypt when checking!!!
+    // throw an error if there isnt a user or password is wrong
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+        return response.render("login", {errorMessage: "Incorrect Email or Password. Try Again.",
+      });
     }
-    response.render("index");
+    request.session.user = user; // this will store everything in the session 
+    response.redirect("/landing");
+
 });
-
-// GET /landing - Shows a welcome page for users, shows the names of all users if an admin
-app.get("/landing", (request, response) => {
-    // need two displays for admin and users
-    if(!request.session.user) {
-      return response. redirect("/login"); 
-    }
-
-    const {username, role} = request.session.user; 
-
-    if (role === "Admin") {
-    return response.render("landing", {
-      landingMessage: `Greetings, ${username}! You're logged in as an Admin.`,
-      users: USERS, // wants to show all of the users for the admin
-    });
-    } else {
-      response.render("landing", {
-        landingMessage: `Greetings, ${username}!`,
-        user: null, // user not needed as we only want it for admin
-      })
-    }
-    // login out button logic needs to be set up
-})
 
 app.post("/logout", (request, response) => {
   request.session.destroy((error) => {
